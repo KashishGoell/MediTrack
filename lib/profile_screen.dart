@@ -91,7 +91,7 @@ class ProfileScreen extends StatelessWidget {
           children: [
             _buildDetailRow(Icons.cake, 'Date of Birth', dob),
             Divider(color: Colors.grey),
-            _buildDetailRow(Icons.credit_card, 'Aadhaar Number', _maskAadhaar(aadhaarNumber)),
+            _buildDetailRow(Icons.credit_card, 'PAN Number', _maskAadhaar(aadhaarNumber)),
             Divider(color: Colors.grey),
             _buildDetailRow(Icons.phone, 'Phone Number', phoneNumber),
             Divider(color: Colors.grey),

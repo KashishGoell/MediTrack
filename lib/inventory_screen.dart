@@ -5,19 +5,59 @@ class InventoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Replace with actual inventory content
     return Scaffold(
       appBar: AppBar(
         title: Text('Inventory'),
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Color(0xFF5995F0), // Consistent AppBar color
+        elevation: 0,
       ),
-      body: Center(
-        child: Text(
-          'Inventory Details Here',
-          style: TextStyle(color: Colors.white),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title section
+            Text(
+              'Inventory Details',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(height: 20),
+            // Card for content
+            Expanded(
+              child: Card(
+                color: Colors.grey[900], // Card color
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                elevation: 8.0,
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Example of inventory content
+                      Text(
+                        'Inventory Details Here',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      // Add more inventory content here as needed
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.black87, // Background color consistent with other screens
     );
   }
 }

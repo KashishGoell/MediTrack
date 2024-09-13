@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:apphaiapp/qr_code_scanner_screen.dart';
 import 'medicine_screen.dart';
@@ -16,11 +15,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Dark background
-      backgroundColor: Colors.black87,
+      // Light background color (#F6F6F9)
+      backgroundColor: Color(0xFFF6F6F9),
       appBar: AppBar(
         title: Text('Welcome, $name'),
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Color(0xFF5995F0), // Primary color (#5995F0)
         elevation: 0,
         actions: [
           // Notifications Icon
@@ -39,14 +38,16 @@ class HomeScreen extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ProfileScreen(
-                name: 'Kashish',
-                dob: '1990-01-01',
-                aadhaarNumber: '123456',
-                phoneNumber: '9876',
-                state: '',
-                city: 'Mumbai',),
-              ),
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(
+                    name: 'Kashish',
+                    dob: '1990-01-01',
+                    aadhaarNumber: '123456',
+                    phoneNumber: '9876',
+                    state: '',
+                    city: 'Mumbai',
+                  ),
+                ),
               );
             },
           ),
@@ -62,7 +63,8 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.black, // Header text color
+                fontFamily: 'Rany', // Ensure font consistency
               ),
               textAlign: TextAlign.center,
             ),
@@ -164,7 +166,7 @@ class HomeScreen extends StatelessWidget {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: Colors.blueGrey.shade700, // Text and icon color
+        foregroundColor: Color(0xFF5995F0), backgroundColor: Colors.white, // Text and icon color
         padding: EdgeInsets.all(16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -177,7 +179,7 @@ class HomeScreen extends StatelessWidget {
           Icon(
             icon,
             size: 40,
-            color: Colors.white,
+            color: Color(0xFF5995F0), // Icon color
           ),
           SizedBox(height: 10),
           Text(
@@ -186,7 +188,7 @@ class HomeScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Colors.black, // Text color
             ),
           ),
         ],

@@ -7,7 +7,7 @@ class MedicineScreen extends StatelessWidget {
       backgroundColor: Colors.black87, // Dark background
       appBar: AppBar(
         title: Text('Medicine & Orders'),
-        backgroundColor: Colors.white, // Red background for the AppBar
+        backgroundColor: Colors.blueGrey, // Consistent AppBar color
         elevation: 0,
       ),
       body: Padding(
@@ -49,7 +49,8 @@ class MedicineScreen extends StatelessWidget {
               },
               child: Text('Place Order'),
               style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blueGrey, // Text color
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blueGrey, // Button background color
                 padding: EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -81,16 +82,16 @@ class MedicineScreen extends StatelessWidget {
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
-            color: Colors.white, // Text color
+            color: Colors.white, // Title text color
           ),
         ),
         subtitle: Text(
           '$dosage\nPrice: \$${price.toStringAsFixed(2)}',
           style: TextStyle(
-            color: Colors.white70, // Subtitle color
+            color: Colors.white70, // Subtitle text color
           ),
         ),
-        tileColor: Colors.grey[800],
+        tileColor: Colors.grey[800], // Tile background color
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),

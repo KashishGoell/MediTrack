@@ -15,27 +15,33 @@ class QRDetailsScreen extends StatelessWidget {
     Map<String, dynamic> decodedData = _decodeQRData(qrData);
 
     return Scaffold(
-      backgroundColor: Colors.grey[900],
+      backgroundColor: Colors.black87, // Dark background
       appBar: AppBar(
         title: Text('QR Code Details'),
-        backgroundColor: Colors.blueGrey[800],
+        backgroundColor: Colors.blueGrey, // Consistent AppBar color
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
               'Decoded QR Data:',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Colors.white, // Title color
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            // Display the decoded data
+            Expanded(
+              child: ListView(
+                children: decodedData.entries.map((entry) => _buildDetailSection(entry.key, entry.value)).toList(),
               ),
             ),
-            SizedBox(height: 16),
-            ...decodedData.entries.map((entry) => _buildDetailSection(entry.key, entry.value)),
           ],
         ),
       ),
@@ -44,10 +50,14 @@ class QRDetailsScreen extends StatelessWidget {
 
   Widget _buildDetailSection(String key, dynamic value) {
     return Card(
-      color: Colors.grey[850],
-      margin: EdgeInsets.symmetric(vertical: 8),
+      color: Colors.grey[900], // Card background color
+      margin: EdgeInsets.symmetric(vertical: 8.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      elevation: 4.0,
       child: Padding(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -56,7 +66,7 @@ class QRDetailsScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.blue[300],
+                color: Colors.blue[300], // Key color
               ),
             ),
             SizedBox(height: 8),
@@ -64,7 +74,7 @@ class QRDetailsScreen extends StatelessWidget {
               value.toString(),
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.white, // Value color
               ),
             ),
           ],
@@ -74,18 +84,15 @@ class QRDetailsScreen extends StatelessWidget {
   }
 
   Map<String, dynamic> _decodeQRData(String data) {
-    // Decrypt QR data
     final decryptedData = _decryptQRData(data, aadharNumber);
 
     // Debug: Print decrypted data to ensure it's correct
     print("Decrypted Data: $decryptedData");
 
-    // Parse the decrypted data
     try {
       // Attempt to parse as JSON
       return jsonDecode(decryptedData);
     } catch (e) {
-      // If JSON parsing fails, split the string by '|' and create a map
       final pairs = decryptedData.split('|');
       Map<String, dynamic> result = {};
       for (var pair in pairs) {
@@ -95,7 +102,6 @@ class QRDetailsScreen extends StatelessWidget {
         }
       }
       if (result.isEmpty) {
-        // If splitting also fails, return the raw decrypted data
         return {'Raw Data': decryptedData};
       }
       return result;
@@ -104,27 +110,14 @@ class QRDetailsScreen extends StatelessWidget {
 
   String _decryptQRData(String encryptedData, String aadharNumber) {
     try {
-      // Decode base64-encoded data
       final encryptedBytes = base64.decode(encryptedData);
-
-      // Extract the IV from the first 16 bytes
       final iv = encrypt.IV(Uint8List.fromList(encryptedBytes.sublist(0, 16)));
-
-      // Extract the actual encrypted content
       final cipherText = encrypt.Encrypted(Uint8List.fromList(encryptedBytes.sublist(16)));
-
-      // Generate key using Aadhaar number
       final key = encrypt.Key(Uint8List.fromList(sha256.convert(utf8.encode(aadharNumber)).bytes));
+      final encrypter = encrypt.Encrypter(encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: null));
 
-      // Set up AES decryption using CBC mode
-      final encrypter = encrypt.Encrypter(
-        encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: null), // No padding
-      );
-
-      // Decrypt the data
       final decryptedData = encrypter.decrypt(cipherText, iv: iv);
 
-      // Unpad the decrypted data (PKCS7 Padding)
       return _pkcs7Unpad(decryptedData);
     } catch (e) {
       return 'Error: ${e.toString()}';
@@ -132,7 +125,6 @@ class QRDetailsScreen extends StatelessWidget {
   }
 
   String _pkcs7Unpad(String data) {
-    // Convert decrypted string back to bytes for unpadding
     final decryptedBytes = Uint8List.fromList(data.codeUnits);
     final padValue = decryptedBytes.last;
 
@@ -140,7 +132,6 @@ class QRDetailsScreen extends StatelessWidget {
       throw FormatException('Invalid padding');
     }
 
-    // Remove the padding bytes
     return utf8.decode(decryptedBytes.sublist(0, decryptedBytes.length - padValue));
   }
 }

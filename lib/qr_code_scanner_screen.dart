@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:crypto/crypto.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'send_otp_screen.dart'; // Import the new OtpScreen
+import 'email_input_screen.dart';
+import 'qr_details_screen.dart'; // Import the QRDetailsScreen
 
 class EnhancedQRCodeScannerScreen extends StatefulWidget {
   @override
@@ -33,72 +38,72 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: <Widget>[
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: <Widget>[
           QRView(
-            key: qrKey,
-            onQRViewCreated: _onQRViewCreated,
-            overlay: QrScannerOverlayShape(
-              borderColor: Colors.white,
-              borderRadius: 10,
-              borderLength: 30,
-              borderWidth: 10,
-              cutOutSize: MediaQuery.of(context).size.width * 0.8,
-            ),
+          key: qrKey,
+          onQRViewCreated: _onQRViewCreated,
+          overlay: QrScannerOverlayShape(
+            borderColor: Colors.white,
+            borderRadius: 10,
+            borderLength: 30,
+            borderWidth: 10,
+            cutOutSize: MediaQuery.of(context).size.width * 0.8,
           ),
-          SafeArea(
+        ),
+        SafeArea(
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                Spacer(),
-                if (qrText != null && qrText!.isNotEmpty)
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Scanned Result:',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          qrText!,
-                          style: TextStyle(fontSize: 16, color: Colors.black),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 16),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            _buildActionButton(
-                              label: 'Open URL',
-                              onPressed: () => qrText != null ? _launchURL(qrText!) : null,
-                              color: Colors.blueGrey,
-                            ),
-                            _buildActionButton(
-                              label: 'See Details',
-                              onPressed: _promptForAadharNumber,
-                              color: Colors.blueGrey,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+              Align(
+              alignment: Alignment.topLeft,
+              child: IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            Spacer(),
+            if (qrText != null && qrText!.isNotEmpty)
+        Container(
+        padding: EdgeInsets.all(16),
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    decoration: BoxDecoration(
+    color: Colors.white.withOpacity(0.8),
+    borderRadius: BorderRadius.circular(8),
+    ),
+    child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+    Text(
+    'Scanned Result:',
+    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black),
+    ),
+    SizedBox(height: 8),
+    Text(
+    qrText!,
+    style: TextStyle(fontSize: 16, color: Colors.black),
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    ),
+    SizedBox(height: 16),
+    Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+    _buildActionButton(
+    label: 'Open URL',
+    onPressed: () => qrText != null ? _launchURL(qrText!)                              : null,
+      color: Colors.blueGrey,
+    ),
+      _buildActionButton(
+        label: 'See Details',
+        onPressed: _promptForAadharNumber,
+        color: Colors.blueGrey,
+      ),
+    ],
+    ),
+    ],
+    ),
+        ),
                 SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -116,9 +121,9 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
                 SizedBox(height: 40),
               ],
             ),
-          ),
-        ],
-      ),
+        ),
+          ],
+        ),
     );
   }
 
@@ -192,11 +197,11 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Enter Aadhar Number'),
+          title: Text('Enter PAN Number'),
           content: TextField(
             controller: aadharController,
             keyboardType: TextInputType.number,
-            decoration: InputDecoration(hintText: 'Aadhar Number'),
+            decoration: InputDecoration(hintText: 'PAN Number'),
           ),
           actions: <Widget>[
             TextButton(
@@ -220,16 +225,26 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
       setState(() {
         aadharNumber = input;
       });
-      _navigateToOtpScreen();
+      _navigateToQRDetailsScreen();
     }
   }
 
-  void _navigateToOtpScreen() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => OtpScreen(email: email), // Pass the email here
-      ),
-    );
+  void _navigateToQRDetailsScreen() {
+    if (qrText != null && aadharNumber != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EmailInputScreen(
+            qrData: qrText!,
+            aadharNumber: aadharNumber!,
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('QR data or Aadhar number is missing.')),
+      );
+    }
   }
 }
+

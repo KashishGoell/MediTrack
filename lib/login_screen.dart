@@ -17,19 +17,19 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Color(0xFFF6F6F9), // Light background color (#F6F6F9)
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Card(
-              color: Colors.grey[900],
+              color: Colors.white, // Card color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
               elevation: 8.0,
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(24.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -41,7 +41,8 @@ class LoginScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black, // Black text color for header
+                          fontFamily: 'Rany', // Ensure you are using the 'Rany' font
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -73,10 +74,15 @@ class LoginScreen extends StatelessWidget {
                         onPressed: () => _handleLogin(context),
                         child: Text('Submit'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueGrey,
+                          backgroundColor: Color(0xFF5995F0), // Button color (#5995F0)
                           padding: EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Rany', // Ensure you are using the 'Rany' font
                           ),
                         ),
                       ),
@@ -87,8 +93,9 @@ class LoginScreen extends StatelessWidget {
                           child: Text(
                             'Not an existing user? Sign Up',
                             style: TextStyle(
-                              color: Colors.grey,
+                              color: Colors.grey[800], // Dark grey for the sign-up text
                               fontWeight: FontWeight.bold,
+                              fontFamily: 'Rany', // Ensure you are using the 'Rany' font
                             ),
                           ),
                         ),
@@ -114,7 +121,7 @@ class LoginScreen extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Colors.black54), // Label color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(color: Colors.blueGrey),
@@ -125,11 +132,11 @@ class LoginScreen extends StatelessWidget {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Colors.white30),
+          borderSide: const BorderSide(color: Colors.black38),
         ),
       ),
       keyboardType: keyboardType,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Text color
       validator: validator,
     );
   }

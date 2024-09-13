@@ -5,19 +5,36 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Replace with actual notifications content
     return Scaffold(
+      backgroundColor: Colors.black87, // Dark background
       appBar: AppBar(
         title: Text('Notifications'),
-        backgroundColor: Colors.blueGrey,
+        backgroundColor: Colors.blueGrey, // Consistent AppBar color
+        elevation: 0,
       ),
-      body: Center(
-        child: Text(
-          'No new notifications',
-          style: TextStyle(color: Colors.white),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Center(
+          child: Card(
+            color: Colors.grey[900], // Card background color
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            elevation: 4.0,
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                'No new notifications',
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Colors.white, // Text color
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
         ),
       ),
-      backgroundColor: Colors.black87,
     );
   }
 }

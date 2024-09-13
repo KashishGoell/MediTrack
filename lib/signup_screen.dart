@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
-
-import 'package:flutter/material.dart';
-import 'home_screen.dart';
 import 'package:intl/intl.dart';
+import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -24,19 +21,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87,
+      backgroundColor: Color(0xFFF6F6F9), // Light background color (#F6F6F9)
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
             padding: EdgeInsets.all(16.0),
             child: Card(
-              color: Colors.grey[900],
+              color: Colors.white, // Card color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12.0),
               ),
               elevation: 8.0,
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(24.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -48,7 +45,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          color: Colors.black, // Black text color for header
+                          fontFamily: 'Rany', // Ensure you are using the 'Rany' font
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -58,39 +56,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         label: 'Name',
                         keyboardType: TextInputType.text,
                         obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your name';
-                          }
-                          return null;
-                        },
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
                       ),
                       SizedBox(height: 16),
                       _buildDateField(),
                       SizedBox(height: 16),
                       _buildTextField(
                         controller: _aadhaarController,
-                        label: 'Aadhaar Number',
+                        label: 'PAN Number',
                         keyboardType: TextInputType.number,
                         obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your Aadhaar number';
-                          }
-                          return null;
-                        },
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your PAN number' : null,
                       ),
+                      SizedBox(height: 16),
                       _buildTextField(
                         controller: _emailController,
                         label: 'E-mail',
-                        keyboardType: TextInputType.text,
+                        keyboardType: TextInputType.emailAddress,
                         obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your E-mail';
-                          }
-                          return null;
-                        },
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your E-mail' : null,
                       ),
                       SizedBox(height: 16),
                       _buildTextField(
@@ -98,12 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         label: 'Phone Number',
                         keyboardType: TextInputType.phone,
                         obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your phone number';
-                          }
-                          return null;
-                        },
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your phone number' : null,
                       ),
                       SizedBox(height: 16),
                       _buildTextField(
@@ -111,12 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         label: 'State',
                         keyboardType: TextInputType.text,
                         obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your state';
-                          }
-                          return null;
-                        },
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your state' : null,
                       ),
                       SizedBox(height: 16),
                       _buildTextField(
@@ -124,12 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         label: 'City',
                         keyboardType: TextInputType.text,
                         obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your city';
-                          }
-                          return null;
-                        },
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your city' : null,
                       ),
                       SizedBox(height: 20),
                       ElevatedButton(
@@ -145,10 +114,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         child: Text('Submit'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueGrey,
+                          backgroundColor: Color(0xFF5995F0), // Button color (#5995F0)
                           padding: EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Rany', // Ensure you are using the 'Rany' font
                           ),
                         ),
                       ),
@@ -174,7 +148,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Colors.black54), // Label color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(color: Colors.blueGrey),
@@ -185,12 +159,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Colors.white30),
+          borderSide: const BorderSide(color: Colors.black38),
         ),
       ),
       keyboardType: keyboardType,
       obscureText: obscureText,
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Text color
       validator: validator,
     );
   }
@@ -200,7 +174,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       controller: _dobController,
       decoration: InputDecoration(
         labelText: 'Date of Birth',
-        labelStyle: TextStyle(color: Colors.white54),
+        labelStyle: TextStyle(color: Colors.black54), // Label color
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(color: Colors.blueGrey),
@@ -211,19 +185,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Colors.white30),
+          borderSide: const BorderSide(color: Colors.black38),
         ),
-        suffixIcon: Icon(Icons.calendar_today, color: Colors.white54),
+        suffixIcon: Icon(Icons.calendar_today, color: Colors.black54),
       ),
-      style: TextStyle(color: Colors.white),
+      style: TextStyle(color: Colors.black), // Text color
       readOnly: true,
       onTap: () => _selectDate(context),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter your date of birth';
-        }
-        return null;
-      },
+      validator: (value) => value?.isEmpty ?? true ? 'Please enter your date of birth' : null,
     );
   }
 
@@ -237,7 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return Theme(
           data: ThemeData.dark().copyWith(
             colorScheme: ColorScheme.dark(
-              primary: Colors.blueGrey,
+              primary: Color(0xFF5995F0), // Primary color (#5995F0)
               onPrimary: Colors.white,
               surface: Colors.grey[900]!,
               onSurface: Colors.white,
