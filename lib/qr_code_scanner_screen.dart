@@ -86,12 +86,12 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
                             _buildActionButton(
                               label: 'Open URL',
                               onPressed: () => _launchURL(qrText!),
-                              color: Colors.blue,
+                              color: Colors.blueGrey,
                             ),
                             _buildActionButton(
                               label: 'See Details',
                               onPressed: _promptForAadharNumber,  // Updated to prompt for Aadhar Number
-                              color: Colors.green,
+                              color: Colors.blueGrey,
                             ),
                           ],
                         ),

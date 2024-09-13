@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
-import 'package:encrypt/encrypt.dart' as encrypt; // Use alias to avoid conflict
-import 'package:url_launcher/url_launcher.dart';
+import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:flutter/material.dart';
 
 class QRDetailsScreen extends StatelessWidget {
   final String qrData;
@@ -16,10 +15,10 @@ class QRDetailsScreen extends StatelessWidget {
     Map<String, dynamic> decodedData = _decodeQRData(qrData);
 
     return Scaffold(
-      backgroundColor: Colors.black87, // Dark background
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
         title: Text('QR Code Details'),
-        backgroundColor: Colors.white, // Elegant AppBar color
+        backgroundColor: Colors.blueGrey[800],
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -27,116 +26,83 @@ class QRDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
             Text(
               'Decoded QR Data:',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // Elegant title color
+                color: Colors.white,
               ),
             ),
             SizedBox(height: 16),
-            // Details
-            ...decodedData.entries.map((entry) => _buildDetailRow(entry.key, entry.value)),
-            SizedBox(height: 24),
-            // Open URL Button
-            if (_isURL(qrData))
-              _buildOptionButton(
-                label: 'Open URL',
-                textColor: Colors.white,
-                onPressed: () => _launchURL(qrData, context),
-              ),
+            ...decodedData.entries.map((entry) => _buildDetailSection(entry.key, entry.value)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDetailRow(String key, dynamic value) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text(
+  Widget _buildDetailSection(String key, dynamic value) {
+    return Card(
+      color: Colors.grey[850],
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
               key,
               style: TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.white, // Elegant key color
+                color: Colors.blue[300],
               ),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
+            SizedBox(height: 8),
+            Text(
               value.toString(),
-              style: TextStyle(color: Colors.white), // Text color
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOptionButton({
-    required String label,
-    required Color textColor,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.white, Colors.blueGrey], // Gradient colors
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        child: Text(label),
-        style: ElevatedButton.styleFrom(
-          foregroundColor: textColor, backgroundColor: Colors.transparent, // Text color
-          padding: EdgeInsets.symmetric(vertical: 14, horizontal: 24),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 5, // Set elevation directly
-        ).copyWith(
-          shadowColor: MaterialStateProperty.all(Colors.black.withOpacity(0.5)),
+          ],
         ),
       ),
     );
   }
 
   Map<String, dynamic> _decodeQRData(String data) {
-    // Assuming `data` contains encrypted data
+    // Decrypt QR data
     final decryptedData = _decryptQRData(data, aadharNumber);
 
-    if (decryptedData['Type'] == 'Error') {
-      return {
-        'Type': 'Error',
-        'Message': decryptedData['Message'],
-      };
-    }
+    // Debug: Print decrypted data to ensure it's correct
+    print("Decrypted Data: $decryptedData");
 
-    // Handle decrypted data
-    if (_isURL(decryptedData['Content'])) {
-      return {
-        'Type': 'URL',
-        'Content': decryptedData['Content'],
-      };
-    } else {
-      // Assuming decrypted data is in JSON format
-      return _parseDecryptedData(decryptedData['Content']);
+    // Parse the decrypted data
+    try {
+      // Attempt to parse as JSON
+      return jsonDecode(decryptedData);
+    } catch (e) {
+      // If JSON parsing fails, split the string by '|' and create a map
+      final pairs = decryptedData.split('|');
+      Map<String, dynamic> result = {};
+      for (var pair in pairs) {
+        final keyValue = pair.split('=');
+        if (keyValue.length == 2) {
+          result[keyValue[0].trim()] = keyValue[1].trim();
+        }
+      }
+      if (result.isEmpty) {
+        // If splitting also fails, return the raw decrypted data
+        return {'Raw Data': decryptedData};
+      }
+      return result;
     }
   }
 
-  Map<String, dynamic> _decryptQRData(String encryptedData, String aadharNumber) {
+  String _decryptQRData(String encryptedData, String aadharNumber) {
     try {
       // Decode base64-encoded data
       final encryptedBytes = base64.decode(encryptedData);
@@ -150,48 +116,31 @@ class QRDetailsScreen extends StatelessWidget {
       // Generate key using Aadhaar number
       final key = encrypt.Key(Uint8List.fromList(sha256.convert(utf8.encode(aadharNumber)).bytes));
 
-      // Set up AES decryption using CBC mode (use an appropriate mode)
+      // Set up AES decryption using CBC mode
       final encrypter = encrypt.Encrypter(
-        encrypt.AES(key, mode: encrypt.AESMode.cbc),
+        encrypt.AES(key, mode: encrypt.AESMode.cbc, padding: null), // No padding
       );
 
       // Decrypt the data
       final decryptedData = encrypter.decrypt(cipherText, iv: iv);
 
-      return {
-        'Type': 'Decrypted Data',
-        'Content': decryptedData,
-      };
+      // Unpad the decrypted data (PKCS7 Padding)
+      return _pkcs7Unpad(decryptedData);
     } catch (e) {
-      return {
-        'Type': 'Error',
-        'Message': 'Failed to decrypt data: ${e.toString()}',
-      };
+      return 'Error: ${e.toString()}';
     }
   }
 
-  Map<String, dynamic> _parseDecryptedData(String data) {
-    try {
-      return jsonDecode(data);
-    } catch (e) {
-      return {
-        'Type': 'Error',
-        'Message': 'Failed to parse decrypted data: ${e.toString()}',
-      };
-    }
-  }
+  String _pkcs7Unpad(String data) {
+    // Convert decrypted string back to bytes for unpadding
+    final decryptedBytes = Uint8List.fromList(data.codeUnits);
+    final padValue = decryptedBytes.last;
 
-  bool _isURL(String str) {
-    return str.toLowerCase().startsWith('http://') || str.toLowerCase().startsWith('https://');
-  }
-
-  void _launchURL(String url, BuildContext context) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not launch $url')),
-      );
+    if (padValue < 1 || padValue > 16) {
+      throw FormatException('Invalid padding');
     }
+
+    // Remove the padding bytes
+    return utf8.decode(decryptedBytes.sublist(0, decryptedBytes.length - padValue));
   }
 }
