@@ -1,131 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'user_provider.dart';
 import 'home_screen.dart';
-import 'signup_screen.dart';  // Import the SignUpScreen
+import 'signup_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  @override
-  _LoginScreenState createState() => _LoginScreenState();
-}
+class LoginScreen extends StatelessWidget {
+  final bool isPharmacyOwner;
 
-class _LoginScreenState extends State<LoginScreen> {
+  LoginScreen({Key? key, required this.isPharmacyOwner}) : super(key: key);
+
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _aadhaarController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _idController = TextEditingController();
+  final _phoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black87, // Dark background
+      backgroundColor: Colors.black87,
       body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Card(
-            color: Colors.grey[900], // Card background color
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: 8.0,
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Text(
-                      'Login',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white, // Title color
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 20),
-                    _buildTextField(
-                      controller: _nameController,
-                      label: 'Name',
-                      keyboardType: TextInputType.text,
-                      obscureText: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _aadhaarController,
-                      label: 'Aadhaar Number',
-                      keyboardType: TextInputType.number,
-                      obscureText: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your Aadhaar number';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    _buildTextField(
-                      controller: _phoneController,
-                      label: 'Phone Number',
-                      keyboardType: TextInputType.phone,
-                      obscureText: false,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your phone number';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState?.validate() ?? false) {
-                          // Handle login submit action here
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(name: _nameController.text),
-                            ),
-                          );
-                        }
-                      },
-                      child: Text('Submit'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blueGrey, // Button color
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Card(
+              color: Colors.grey[900],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+              elevation: 8.0,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        isPharmacyOwner ? 'Pharmacy Owner Login' : 'Consumer Login',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SignUpScreen(),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          'Not an existing user? Sign Up',
-                          style: TextStyle(
-                            color: Colors.grey, // Text color
-                            fontWeight: FontWeight.bold,
+                      SizedBox(height: 20),
+                      _buildTextField(
+                        controller: _nameController,
+                        label: 'Name',
+                        keyboardType: TextInputType.text,
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your name' : null,
+                      ),
+                      SizedBox(height: 16),
+                      _buildTextField(
+                        controller: _idController,
+                        label: isPharmacyOwner ? 'PAN Card Number' : 'Aadhaar Number',
+                        keyboardType: TextInputType.text,
+                        validator: (value) => value?.isEmpty ?? true
+                            ? 'Please enter your ${isPharmacyOwner ? 'PAN card number' : 'Aadhaar number'}'
+                            : null,
+                      ),
+                      SizedBox(height: 16),
+                      _buildTextField(
+                        controller: _phoneController,
+                        label: 'Phone Number',
+                        keyboardType: TextInputType.phone,
+                        validator: (value) => value?.isEmpty ?? true ? 'Please enter your phone number' : null,
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => _handleLogin(context),
+                        child: Text('Submit'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueGrey,
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      Center(
+                        child: TextButton(
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => SignUpScreen())),
+                          child: Text(
+                            'Not an existing user? Sign Up',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -139,7 +108,6 @@ class _LoginScreenState extends State<LoginScreen> {
     required TextEditingController controller,
     required String label,
     required TextInputType keyboardType,
-    required bool obscureText,
     required String? Function(String?) validator,
   }) {
     return TextFormField(
@@ -161,11 +129,23 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
       keyboardType: keyboardType,
-      obscureText: obscureText,
       style: TextStyle(color: Colors.white),
       validator: validator,
     );
   }
+
+  void _handleLogin(BuildContext context) {
+    if (_formKey.currentState?.validate() ?? false) {
+      Provider.of<UserProvider>(context, listen: false).setUserDetails(
+        name: _nameController.text,
+        idNumber: _idController.text,
+        phoneNumber: _phoneController.text,
+        isPharmacyOwner: isPharmacyOwner,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen(name: _nameController.text)),
+      );
+    }
+  }
 }
-
-

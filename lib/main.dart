@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:apphaiapp/src/features/authentication/screens/qr_scanner_screen/qr_scanner.dart';
 import 'qr_details_screen.dart';
 import 'login_screen.dart';
+import 'user_type_selection_screen.dart' ;
 void main() {
   runApp(MainApp());
 }
@@ -17,7 +18,7 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginScreen(),
+      home: UserTypeSelectionScreen(),
     );
   }
 }
