@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
+
+import 'package:flutter/material.dart';
+import 'home_screen.dart';
 import 'package:intl/intl.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -13,6 +16,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dobController = TextEditingController();
   final TextEditingController _aadhaarController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
@@ -72,6 +76,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your Aadhaar number';
+                          }
+                          return null;
+                        },
+                      ),
+                      _buildTextField(
+                        controller: _emailController,
+                        label: 'E-mail',
+                        keyboardType: TextInputType.text,
+                        obscureText: false,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your E-mail';
                           }
                           return null;
                         },

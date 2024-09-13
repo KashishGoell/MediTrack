@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'qr_details_screen.dart';
+import 'send_otp_screen.dart'; // Import the new OtpScreen
 
 class EnhancedQRCodeScannerScreen extends StatefulWidget {
   @override
@@ -14,6 +14,7 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
   String? qrText;
   bool isFlashOn = false;
   String? aadharNumber;
+  String email = 'user@example.com'; // Placeholder email, replace with actual email from SignUpScreen
 
   @override
   void reassemble() {
@@ -57,7 +58,7 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
                   ),
                 ),
                 Spacer(),
-                if (qrText != null)
+                if (qrText != null && qrText!.isNotEmpty)
                   Container(
                     padding: EdgeInsets.all(16),
                     margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -85,12 +86,12 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
                           children: [
                             _buildActionButton(
                               label: 'Open URL',
-                              onPressed: () => _launchURL(qrText!),
+                              onPressed: () => qrText != null ? _launchURL(qrText!) : null,
                               color: Colors.blueGrey,
                             ),
                             _buildActionButton(
                               label: 'See Details',
-                              onPressed: _promptForAadharNumber,  // Updated to prompt for Aadhar Number
+                              onPressed: _promptForAadharNumber,
                               color: Colors.blueGrey,
                             ),
                           ],
@@ -123,14 +124,15 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
 
   Widget _buildActionButton({
     required String label,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     required Color color,
   }) {
     return ElevatedButton(
       child: Text(label),
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: color,
+        foregroundColor: Colors.white,
+        backgroundColor: color,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
@@ -173,7 +175,7 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
     controller?.flipCamera();
   }
 
-  void _launchURL(String url) async {
+  Future<void> _launchURL(String url) async {
     final uri = Uri.parse(url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
@@ -184,11 +186,11 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
     }
   }
 
-  void _promptForAadharNumber() {
-    showDialog(
+  Future<void> _promptForAadharNumber() async {
+    final TextEditingController aadharController = TextEditingController();
+    final String? input = await showDialog<String>(
       context: context,
       builder: (BuildContext context) {
-        TextEditingController aadharController = TextEditingController();
         return AlertDialog(
           title: Text('Enter Aadhar Number'),
           content: TextField(
@@ -200,30 +202,33 @@ class _EnhancedQRCodeScannerScreenState extends State<EnhancedQRCodeScannerScree
             TextButton(
               child: Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(null);
               },
             ),
             TextButton(
               child: Text('Submit'),
               onPressed: () {
-                Navigator.of(context).pop();
-                setState(() {
-                  aadharNumber = aadharController.text;
-                });
-                _navigateToDetailsScreen(qrText!, aadharNumber!);
+                Navigator.of(context).pop(aadharController.text);
               },
             ),
           ],
         );
       },
     );
+
+    if (input != null && input.isNotEmpty) {
+      setState(() {
+        aadharNumber = input;
+      });
+      _navigateToOtpScreen();
+    }
   }
 
-  void _navigateToDetailsScreen(String qrData, String aadharNumber) {
+  void _navigateToOtpScreen() {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => QRDetailsScreen(qrData: qrData, aadharNumber: aadharNumber),
+        builder: (context) => OtpScreen(email: email), // Pass the email here
       ),
     );
   }
