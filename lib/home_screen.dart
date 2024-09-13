@@ -15,141 +15,29 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Light background color (#F6F6F9)
       backgroundColor: Color(0xFFF6F6F9),
-      appBar: AppBar(
-        title: Text('Welcome, $name'),
-        backgroundColor: Color(0xFF5995F0), // Primary color (#5995F0)
-        elevation: 0,
-        actions: [
-          // Notifications Icon
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NotificationsScreen()),
-              );
-            },
-          ),
-          // Profile Icon
-          IconButton(
-            icon: Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(
-                    name: 'Kashish',
-                    dob: '1990-01-01',
-                    aadhaarNumber: '123456',
-                    phoneNumber: '9876',
-                    state: '',
-                    city: 'Mumbai',
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Welcome Text
-            Text(
-              'Hi, $name!',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black, // Header text color
-                fontFamily: 'Rany', // Ensure font consistency
-              ),
-              textAlign: TextAlign.center,
-            ),
+            _buildHeader(context),
             SizedBox(height: 20),
-            // Grid of Feature Buttons
-            Expanded(
-              child: GridView.count(
-                crossAxisCount: 2, // Number of columns
-                mainAxisSpacing: 20, // Vertical spacing
-                crossAxisSpacing: 20, // Horizontal spacing
-                children: [
-                  _buildFeatureCard(
-                    icon: Icons.qr_code_scanner,
-                    label: 'Scan QR Code',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EnhancedQRCodeScannerScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildFeatureCard(
-                    icon: Icons.medication,
-                    label: 'Check Medicine & Order',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MedicineScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildFeatureCard(
-                    icon: Icons.inventory,
-                    label: 'View Inventory',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => InventoryScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildFeatureCard(
-                    icon: Icons.shopping_cart,
-                    label: 'View Orders',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrdersScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildFeatureCard(
-                    icon: Icons.notifications_active,
-                    label: 'Notifications',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  _buildFeatureCard(
-                    icon: Icons.settings,
-                    label: 'Settings',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SettingsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+            _buildWelcomeCard(),
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Quick Actions',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
+            ),
+            SizedBox(height: 10),
+            Expanded(
+              child: _buildFeatureGrid(context),
             ),
           ],
         ),
@@ -157,41 +45,185 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Helper method to build feature cards
-  Widget _buildFeatureCard({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return ElevatedButton(
-      onPressed: onTap,
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Color(0xFF5995F0), backgroundColor: Colors.white, // Text and icon color
-        padding: EdgeInsets.all(16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        elevation: 5, // Shadow effect
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildHeader(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Icon(
-            icon,
-            size: 40,
-            color: Color(0xFF5995F0), // Icon color
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Welcome back,',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              Text(
+                name,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 10),
-          Text(
-            label,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black, // Text color
-            ),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.notifications_none, color: Colors.black),
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NotificationsScreen())),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      name: 'Kashish',
+                      dob: '1990-01-01',
+                      aadhaarNumber: '123456',
+                      phoneNumber: '9876',
+                      state: '',
+                      city: 'Mumbai',
+                    ),
+                  ),
+                ),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('assets/profile_image.png'),
+                  radius: 20,
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWelcomeCard() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF5995F0), Color(0xFF7EABF5)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0xFF5995F0).withOpacity(0.3),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ready to start your day?',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  'Check your inventory and orders',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.arrow_forward_ios,
+            color: Colors.white,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureGrid(BuildContext context) {
+    final features = [
+      {'icon': Icons.qr_code_scanner, 'label': 'Scan QR', 'screen': EnhancedQRCodeScannerScreen()},
+      {'icon': Icons.medication, 'label': 'Medicines', 'screen': MedicineScreen()},
+      {'icon': Icons.inventory, 'label': 'Inventory', 'screen': InventoryScreen()},
+      {'icon': Icons.shopping_cart, 'label': 'Orders', 'screen': OrdersScreen()},
+      {'icon': Icons.settings, 'label': 'Settings', 'screen': SettingsScreen()},
+    ];
+
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        childAspectRatio: 1,
+        crossAxisSpacing: 15,
+        mainAxisSpacing: 15,
+      ),
+      itemCount: features.length,
+      itemBuilder: (context, index) {
+        return _buildFeatureCard(
+          context: context,
+          icon: features[index]['icon'] as IconData,
+          label: features[index]['label'] as String,
+          screen: features[index]['screen'] as Widget,
+        );
+      },
+    );
+  }
+
+  Widget _buildFeatureCard({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required Widget screen,
+  }) {
+    return GestureDetector(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => screen)),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 32,
+              color: Color(0xFF5995F0),
+            ),
+            SizedBox(height: 8),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

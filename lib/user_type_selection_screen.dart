@@ -5,86 +5,121 @@ class UserTypeSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF6F6F9), // Light background color (#F6F6F9)
-      body: Center(
+      backgroundColor: Color(0xFFF6F6F9),
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Card(
-            color: Colors.white, // Card color
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12.0),
-            ),
-            elevation: 8.0,
-            child: Padding(
-              padding: EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Select User Type',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black, // Black text color for this text
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: 32),
-                  _buildUserTypeButton(
-                    context,
-                    'Pharmacy Owner',
-                    Icons.local_pharmacy,
-                    isPharmacyOwner: true,
-                  ),
-                  SizedBox(height: 16),
-                  _buildUserTypeButton(
-                    context,
-                    'Regular Consumer',
-                    Icons.person,
-                    isPharmacyOwner: false,
-                  ),
-                ],
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Welcome',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF333333),
+                ),
               ),
-            ),
+              SizedBox(height: 8),
+              Text(
+                'Choose your account type to get started',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Color(0xFF666666),
+                ),
+              ),
+              SizedBox(height: 60),
+              _buildUserTypeCard(
+                context,
+                'Pharmacy Owner',
+                'Manage your pharmacy and inventory',
+                Icons.local_pharmacy,
+                isPharmacyOwner: true,
+              ),
+              SizedBox(height: 24),
+              _buildUserTypeCard(
+                context,
+                'Regular Consumer',
+                'Search and order medications',
+                Icons.person,
+                isPharmacyOwner: false,
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildUserTypeButton(
+  Widget _buildUserTypeCard(
       BuildContext context,
-      String label,
+      String title,
+      String subtitle,
       IconData icon, {
         required bool isPharmacyOwner,
       }) {
-    return ElevatedButton.icon(
-      icon: Icon(icon, color: Colors.white),
-      label: Text(
-        label,
-        style: TextStyle(
-          color: Colors.white, // White text color for the button label
-        ),
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
       ),
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginScreen(isPharmacyOwner: isPharmacyOwner),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(isPharmacyOwner: isPharmacyOwner),
+            ),
+          );
+        },
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Color(0xFF5995F0).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  size: 32,
+                  color: Color(0xFF5995F0),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF333333),
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Color(0xFF666666),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Color(0xFF5995F0),
+              ),
+            ],
           ),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white,
-        backgroundColor: Color(0xFF5995F0), // Button color (#5995F0)
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        textStyle: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
         ),
       ),
     );

@@ -15,49 +15,59 @@ class QRDetailsScreen extends StatelessWidget {
     Map<String, dynamic> decodedData = _decodeQRData(qrData);
 
     return Scaffold(
-      backgroundColor: Colors.black87, // Dark background
+      backgroundColor: Colors.white10, // Dark background
       appBar: AppBar(
-        title: Text('QR Code Details'),
-        backgroundColor: Colors.blueGrey, // Consistent AppBar color
+        title: Text('QR Code Details', style: TextStyle(fontWeight: FontWeight.w600)),
+        backgroundColor: Colors.transparent,
         elevation: 0,
+        centerTitle: true,
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Decoded QR Data:',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // Title color
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Decoded Information',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white70,
+                  letterSpacing: 0.5,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-            // Display the decoded data
-            Expanded(
-              child: ListView(
-                children: decodedData.entries.map((entry) => _buildDetailSection(entry.key, entry.value)).toList(),
+              SizedBox(height: 24),
+              Expanded(
+                child: ListView(
+                  physics: BouncingScrollPhysics(),
+                  children: decodedData.entries.map((entry) => _buildDetailSection(entry.key, entry.value)).toList(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildDetailSection(String key, dynamic value) {
-    return Card(
-      color: Colors.grey[900], // Card background color
-      margin: EdgeInsets.symmetric(vertical: 8.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
+    return Container(
+      margin: EdgeInsets.only(bottom: 16.0),
+      decoration: BoxDecoration(
+        color: Colors.white70,
+        borderRadius: BorderRadius.circular(16.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
-      elevation: 4.0,
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,8 +75,9 @@ class QRDetailsScreen extends StatelessWidget {
               key,
               style: TextStyle(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue[300], // Key color
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF64B5F6), // Light blue color
+                letterSpacing: 0.5,
               ),
             ),
             SizedBox(height: 8),
@@ -74,7 +85,8 @@ class QRDetailsScreen extends StatelessWidget {
               value.toString(),
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.white, // Value color
+                color: Colors.white.withOpacity(0.87),
+                height: 1.5,
               ),
             ),
           ],
@@ -86,11 +98,7 @@ class QRDetailsScreen extends StatelessWidget {
   Map<String, dynamic> _decodeQRData(String data) {
     final decryptedData = _decryptQRData(data, aadharNumber);
 
-    // Debug: Print decrypted data to ensure it's correct
-    print("Decrypted Data: $decryptedData");
-
     try {
-      // Attempt to parse as JSON
       return jsonDecode(decryptedData);
     } catch (e) {
       final pairs = decryptedData.split('|');
@@ -101,10 +109,7 @@ class QRDetailsScreen extends StatelessWidget {
           result[keyValue[0].trim()] = keyValue[1].trim();
         }
       }
-      if (result.isEmpty) {
-        return {'Raw Data': decryptedData};
-      }
-      return result;
+      return result.isEmpty ? {'Raw Data': decryptedData} : result;
     }
   }
 

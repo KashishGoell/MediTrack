@@ -37,35 +37,24 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
       }),
     );
 
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       setState(() {
         _otp = responseData['otp'];
         _otpSent = true;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP sent successfully')),
-      );
+      _showSnackBar('OTP sent successfully');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send OTP')),
-      );
+      _showSnackBar('Failed to send OTP');
     }
   }
 
   void _verifyOTP() {
     if (_otpController.text == _otp) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verified successfully')),
-      );
+      _showSnackBar('OTP verified successfully');
       _navigateToQRDetails();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('OTP verified successfully')),
-      );
+      _showSnackBar('Invalid OTP. Please try again.');
     }
   }
 
@@ -81,16 +70,63 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
     );
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Color(0xFF1E3A8A),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField(TextEditingController controller, String hint, TextInputType inputType) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: inputType,
+        style: TextStyle(color: Color(0xFF1E3A8A)),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: TextStyle(color: Color(0xFF9CA3AF)),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          fillColor: Colors.white,
+          filled: true,
+          contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+        ),
+      ),
+    );
+  }
+
   Widget _buildButton(String label, VoidCallback onPressed) {
     return ElevatedButton(
-      child: Text(label),
       onPressed: onPressed,
+      child: Text(label, style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: Color(0xFF5995F0), // Text color
-        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+        foregroundColor: Colors.white,
+        backgroundColor: Color(0xFF5995F0),
+        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
+        elevation: 5,
       ),
     );
   }
@@ -98,59 +134,44 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF6F6F9), // Light background color
+      backgroundColor: Color(0xFFF3F4F6),
       appBar: AppBar(
-        title: Text('Enter Email'),
-        backgroundColor: Color(0xFF5995F0), // AppBar color
+        title: Text('Email Verification', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Color(0xFF1E3A8A),
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Email Input Field
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              style: TextStyle(color: Colors.black), // Text color
-              decoration: InputDecoration(
-                hintText: 'Enter your email',
-                hintStyle: TextStyle(color: Colors.black54), // Placeholder text color
-                filled: true,
-                fillColor: Colors.white, // Input field color
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            SizedBox(height: 20),
-            _buildButton('Send OTP', _sendOTP),
-            if (_otpSent) ...[
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
               SizedBox(height: 20),
-              // OTP Input Field
-              TextField(
-                controller: _otpController,
-                keyboardType: TextInputType.number,
-                style: TextStyle(color: Colors.black), // Text color
-                decoration: InputDecoration(
-                  hintText: 'Enter OTP',
-                  hintStyle: TextStyle(color: Colors.black54), // Placeholder text color
-                  filled: true,
-                  fillColor: Colors.white, // Input field color
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
+              Text(
+                'Enter Your Email',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF5995F0)),
+                textAlign: TextAlign.center,
               ),
+              SizedBox(height: 30),
+              _buildInputField(_emailController, 'Enter your email', TextInputType.emailAddress),
               SizedBox(height: 20),
-              _buildButton('Verify OTP', _verifyOTP),
+              _buildButton('Send OTP', _sendOTP),
+              if (_otpSent) ...[
+                SizedBox(height: 30),
+                Text(
+                  'Enter OTP',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF5995F0)),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 20),
+                _buildInputField(_otpController, 'Enter OTP', TextInputType.number),
+                SizedBox(height: 20),
+                _buildButton('Verify OTP', _verifyOTP),
+              ],
+              SizedBox(height: 30),
+              _buildButton('See Details', _navigateToQRDetails),
             ],
-            SizedBox(height: 20),
-            _buildButton('See Details', _navigateToQRDetails),
-          ],
+          ),
         ),
       ),
     );
