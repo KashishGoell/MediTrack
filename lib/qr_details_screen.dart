@@ -76,7 +76,7 @@ class QRDetailsScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Color(0xFF64B5F6), // Light blue color
+                color: Colors.black, // Light blue color
                 letterSpacing: 0.5,
               ),
             ),

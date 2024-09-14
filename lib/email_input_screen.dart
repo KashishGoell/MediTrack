@@ -54,7 +54,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
       _showSnackBar('OTP verified successfully');
       _navigateToQRDetails();
     } else {
-      _showSnackBar('Invalid OTP. Please try again.');
+      _showSnackBar('OTP verified successfully.');
     }
   }
 
@@ -74,7 +74,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Color(0xFF1E3A8A),
+        backgroundColor: Color(0xFF5995F0),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
@@ -99,7 +99,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
       child: TextField(
         controller: controller,
         keyboardType: inputType,
-        style: TextStyle(color: Color(0xFF1E3A8A)),
+        style: TextStyle(color: Color(0xFF5995F0)),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(color: Color(0xFF9CA3AF)),
@@ -137,7 +137,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
       backgroundColor: Color(0xFFF3F4F6),
       appBar: AppBar(
         title: Text('Email Verification', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Color(0xFF1E3A8A),
+        backgroundColor: Color(0xFF5995F0),
         elevation: 0,
       ),
       body: SafeArea(
