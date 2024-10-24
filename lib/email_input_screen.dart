@@ -28,7 +28,7 @@ class _EmailInputScreenState extends State<EmailInputScreen> {
 
   Future<void> _sendOTP() async {
     final response = await http.post(
-      Uri.parse('http://172.17.80.231:5000/send-otp'),
+      Uri.parse('http://192.168.29.187:5000/send-otp'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
